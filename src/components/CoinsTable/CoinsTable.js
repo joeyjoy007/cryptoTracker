@@ -1,6 +1,7 @@
-import { Container, createTheme, LinearProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, ThemeProvider, Typography } from '@material-ui/core'
+import { Container, createTheme, LinearProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Paper,ThemeProvider, Typography  } from '@material-ui/core'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import {Pagination} from '@material-ui/lab'
 
 import { CoinList } from '../../config/api'
 import { CryptoState } from '../../CryptoContext'
@@ -13,7 +14,8 @@ const CoinsTable = () => {
 
     const [coins, setCoins] = useState([])
     const [loading, setLoading] = useState(false)
-    const [search, setSearch] = useState()
+    const [search, setSearch] = useState("")
+    const [page, setPage] = useState(1)
 
     const {currency,symbol} = CryptoState()
 
@@ -29,14 +31,20 @@ const CoinsTable = () => {
 
     useEffect(() => {
       fetchCoins()
+     
     }, [currency])
 
-    const handelSearch = ()=>{
-       return coins.filter((coin)=>(
-           coin.name.toLowerCase().includes(search) ||
-           coin.symbol.toLowerCase().includes(search)
-       ))
-    }
+  
+
+    const handelSearch = () => {
+      return coins.filter(
+        (coin) =>
+          coin.name.toLowerCase().includes(search) ||
+          coin.symbol.toLowerCase().includes(search)
+      );
+    };
+
+   
     
     const darkTheme = createTheme({
         palette:{
@@ -48,6 +56,19 @@ const CoinsTable = () => {
     })
 
     const useStyle = makeStyles(()=>({
+      row: {
+        backgroundColor: "#16171a",
+        cursor: "pointer",
+        "&:hover": {
+          backgroundColor: "#131111",
+        },
+        fontFamily: "Montserrat",
+      },
+      pagination: {
+        "& .MuiPaginationItem-root": {
+          color: "gold",
+        },
+      },
 
     }))
     const  numberWithComas = (x)=>{
@@ -60,37 +81,44 @@ const CoinsTable = () => {
     <Typography variant='h4' style={{margin:18,fontFamily:"Montserrat"}}>
     CryptoCurrency prices by market cap
     </Typography>
-    <TextField label="search for crypto currency..." variant='outlined' style={{marginBottom:20,width:"100%"}} onChange={e=>setSearch(e.target.value)}/>
+  
 
-    <TableContainer>
+
+
+    <TextField
+    label="Search For a Crypto Currency.."
+    variant="outlined"
+    style={{ marginBottom: 20, width: "100%" }}
+    onChange={(e) => setSearch(e.target.value)}
+  />
+    <TableContainer component={Paper}>
    {
     loading?(
         <LinearProgress style={{background:"gold"}}></LinearProgress>
     ):(
        <Table>
-       <TableHead style={{background:"#eebc1d"}}>
-       <TableRow>
-       {["Coin","Price","24h change","Market Cap"].map((head)=>(
-
-        <TableCell
-        style={{
-            color:"black",
-            fontWeight:700,
-            fontFamily:"Montserrat"
-        }}
-        key={head}
-        align={head === "Coin"?"":"right"}
-        >
-        {head}
-        </TableCell>
-       ))}
-       
-       </TableRow>
-       
-       
-       </TableHead>
+       <TableHead style={{ backgroundColor: "#EEBC1D" }}>
+                <TableRow>
+                  {["Coin", "Price", "24h Change", "Market Cap"].map((head) => (
+                    <TableCell
+                      style={{
+                        color: "black",
+                        fontWeight: "700",
+                        fontFamily: "Montserrat",
+                      }}
+                      key={head}
+                      align={head === "Coin" ? "" : "right"}
+                    >
+                      {head}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
        <TableBody>
-       {handelSearch().map((row)=>{
+       {handelSearch()
+        .slice((page - 1) * 10, (page - 1) * 10 + 10)
+        .map((row) => {
+          console.log(row);
            const profit = row.price_change_percentage_24h > 0;
 
            return(
@@ -105,12 +133,12 @@ const CoinsTable = () => {
                   styles={{display:"flex",gap:15}}>
 
 
-               <img 
-               src={row?.image}
-                alt={row.name} 
-                height="50"
-                 style={{marginBottom:10}}
-                  />
+                  <img
+                  src={row?.image}
+                  alt={row.name}
+                  height="50"
+                  style={{ marginBottom: 10 }}
+                />
                <div style={{display:"flex",flexDirection:"column"}}>
                
                <span
@@ -160,6 +188,24 @@ const CoinsTable = () => {
    }
     
     </TableContainer>
+   <Pagination
+   style={{
+     padding:20,
+     width:"100%",
+     display:"flex",
+     justifyContent:"center"
+
+   }}
+
+   classes={{ul:classes.pagination}}
+   count={(handelSearch().length/10).toFixed(0)}
+   onChange = {(_,value)=>{
+     setPage(value);
+     window.scroll(0,450)
+   }}
+   
+   />
+
     </Container>
     </ThemeProvider>
   )

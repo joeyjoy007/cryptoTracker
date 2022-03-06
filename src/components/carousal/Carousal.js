@@ -39,7 +39,7 @@ const Carousal = () => {
         setTrending(data)
     }
 
-    console.log(trending)
+
 
    
 

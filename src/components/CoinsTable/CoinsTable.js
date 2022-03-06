@@ -118,7 +118,7 @@ const CoinsTable = () => {
        {handelSearch()
         .slice((page - 1) * 10, (page - 1) * 10 + 10)
         .map((row) => {
-          console.log(row);
+     
            const profit = row.price_change_percentage_24h > 0;
 
            return(

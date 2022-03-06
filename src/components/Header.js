@@ -16,7 +16,7 @@ const Header = () => {
   }))
 
   const {currency,setCurrency} = CryptoState()
-  console.log(currency)
+
 
   const classes = useStyle()
 

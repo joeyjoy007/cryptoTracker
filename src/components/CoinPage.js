@@ -61,11 +61,32 @@ description:{
   paddingBottom:15,
   paddingTop:0,
   textAlign:"justify"
+},
+marketData:{
+  alignSelf:"start",
+  padding:25,
+  paddingTop:10,
+  width:"100%",
+  [theme.breakpoints.down("md")]:{
+    display:"flex",
+    justifyContent:"space-around"
+  },
+  [theme.breakpoints.down("sm")]:{
+    flexDirection:"column",
+    alignItems:"center"
+  },
+  [theme.breakpoints.down("xs")]:{
+    alignItems:"start"
+  }
 }
 
 }))
 
 const classes = useStyles()
+
+const  numberWithComas = (x)=>{
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+}
 
     
   return (
@@ -101,8 +122,7 @@ const classes = useStyles()
     </Typography>
     </span>
     </div>
-    <CoinInfo coin = {coin} 
- />
+    <CoinInfo coin = {coin}  />
     
     </div>
   )
